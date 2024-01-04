@@ -15,10 +15,15 @@ import { validateEmail } from '../utils';
 
 const SubscribeScreen = () => {
   const [email, setEmail] = useState("");
+  const [isValidEmail, setIsValidEmail] = useState(false);
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    setIsValidEmail(validateEmail(text));
+  };
 
   const handleSubscribe = () => {
-    const validEmail = validateEmail(email)
-    if (!validEmail) {
+    if (!isValidEmail) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
       return;
     }
@@ -28,6 +33,7 @@ const SubscribeScreen = () => {
       `Thanks for subscribing, stay tuned!`
     );
     setEmail("");
+    setIsValidEmail(false);
   };
 
   const handlePressOutside = () => {
@@ -55,19 +61,18 @@ const SubscribeScreen = () => {
             <TextInput
               style={styles.input}
               placeholder="Type your email"
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={handleEmailChange}
               value={email}
               keyboardType="email-address"
               autoCapitalize="none"
               returnKeyType={'none'}
-              onSubmitEditing={handleSubscribe}
             />
             <Pressable
               style={({ pressed }) => [
                 styles.button,
-                { backgroundColor: pressed ? '#55786d' : !email ? 'gray' : '#3a524b' },
+                { backgroundColor: pressed ? '#55786d' : isValidEmail ? '#3a524b' : 'gray' },
               ]}
-              disabled={!email}
+              disabled={!isValidEmail}
               onPress={handleSubscribe}
             >
               <Text style={styles.buttonText}>Subscribe</Text>
@@ -121,8 +126,8 @@ const styles = StyleSheet.create({
     // fontWeight: "bold",
   },
   headingSection: {
-    alignItems: 'center'
-  }
+    alignItems: "center",
+  },
 });
 
 export default SubscribeScreen;
